@@ -37,12 +37,15 @@ class Livre(models.Model):
         Categorie, 
         on_delete=models.SET_NULL, 
         null=True, 
+        blank=True,
         related_name='livres',
         verbose_name="Catégorie"
     )
     annee_publication = models.IntegerField(
         validators=[MinValueValidator(1450), MaxValueValidator(date.today().year)],
-        verbose_name="Année de publication"
+        verbose_name="Année de publication",
+        null=True,
+        blank=True
     )
     quantite_disponible = models.IntegerField(
         default=1,
@@ -66,7 +69,7 @@ class Livre(models.Model):
     class Meta:
         verbose_name = "Livre"
         verbose_name_plural = "Livres"
-        ordering = ['titre']
+        ordering = ['-date_ajout']  # Tri par date d'ajout décroissante
         indexes = [
             models.Index(fields=['titre']),
             models.Index(fields=['auteur']),
@@ -78,10 +81,9 @@ class Livre(models.Model):
     
     def save(self, *args, **kwargs):
         """Override save method to automatically update status based on quantity"""
+        # CORRECTION : Si au moins 1 disponible, statut = disponible
         if self.quantite_disponible <= 0:
             self.statut = 'indisponible'
-        elif self.quantite_disponible < self.quantite_totale:
-            self.statut = 'emprunte'
         else:
             self.statut = 'disponible'
         super().save(*args, **kwargs)
