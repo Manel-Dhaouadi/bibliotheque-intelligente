@@ -1,0 +1,77 @@
+{% load static %}
+{% if user.is_authenticated %}
+<nav class="bg-gradient-to-r from-indigo-800 to-purple-800 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <a href="{% url 'accueil' %}" class="flex items-center space-x-2">
+                <span class="text-2xl">📚</span>
+                <span class="text-xl font-bold text-white">Bibliothèque<span class="text-indigo-300">IA</span></span>
+            </a>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-1">
+                <a href="{% url 'accueil' %}" class="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition">
+                    🏠 Accueil
+                </a>
+                <a href="{% url 'liste_livres' %}" class="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition">
+                    📖 Livres
+                </a>
+                
+                {% if user.role == 'admin' %}
+                <a href="{% url 'liste_categories' %}" class="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition">
+                    🏷️ Catégories
+                </a>
+                <a href="{% url 'statistiques' %}" class="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition">
+                    📊 Stats
+                </a>
+                <a href="{% url 'liste_emprunts' %}" class="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition">
+                    🔄 Emprunts
+                </a>
+                {% else %}
+                <a href="{% url 'liste_emprunts' %}" class="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition">
+                    📋 Mes emprunts
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- User Menu -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 bg-white/10 rounded-full px-4 py-2">
+                    <span class="text-lg">👤</span>
+                    <span class="text-white font-medium">{{ user.username }}</span>
+                    {% if user.role == 'admin' %}
+                    <span class="bg-yellow-500 text-black text-xs px-2 py-0.5 rounded-full">Admin</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                    🔓 Déconnexion
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% else %}
+<!-- Navbar pour utilisateur NON connecté -->
+<nav class="bg-gradient-to-r from-indigo-800 to-purple-800 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">📚</span>
+                <span class="text-xl font-bold text-white">Bibliothèque<span class="text-indigo-300">IA</span></span>
+            </div>
+            
+            <!-- Navigation Links - UNIQUEMENT Connexion et Inscription -->
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'login' %}" class="text-white hover:bg-white/20 px-4 py-2 rounded-lg transition">
+                    🔑 Connexion
+                </a>
+                <a href="{% url 'register' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition">
+                    📝 Inscription
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endif %}

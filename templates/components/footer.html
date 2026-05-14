@@ -1,0 +1,41 @@
+<footer class="bg-gray-900 text-white mt-12">
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
+                    📚 Bibliothèque IA
+                </h3>
+                <p class="text-gray-400 text-sm">
+                    Application de gestion de bibliothèque intelligente avec assistant IA.
+                </p>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-3">Liens utiles</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'accueil' %}" class="hover:text-white transition">Accueil</a></li>
+                    <li><a href="{% url 'liste_livres' %}" class="hover:text-white transition">Catalogue</a></li>
+                    <li><a href="{% url 'liste_emprunts' %}" class="hover:text-white transition">Mes emprunts</a></li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}" class="hover:text-white transition">Connexion</a></li>
+                    <li><a href="{% url 'register' %}" class="hover:text-white transition">Inscription</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-3">Contact</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li>📧 bibliotheque@ia.com</li>
+                    <li>📞 +216 29051249</li>
+                    <li>📍 Bizerte, Tunisie</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="border-t border-gray-800 mt-6 pt-6 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 Bibliothèque IA - Tous droits réservés</p>
+        </div>
+    </div>
+</footer>

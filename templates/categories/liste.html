@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Catégories - Bibliothèque IA{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-xl p-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">🏷️ Gestion des Catégories</h1>
+            <p class="text-gray-500 mt-1">Organisez vos livres par catégories</p>
+        </div>
+        <a href="{% url 'ajouter_categorie' %}" class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center gap-2">
+            <span class="text-lg">+</span> Ajouter une catégorie
+        </a>
+    </div>
+
+    {% if categories %}
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b-2 border-gray-100">
+                    <th class="px-4 py-4 text-left text-gray-500 font-semibold">ID</th>
+                    <th class="px-4 py-4 text-left text-gray-500 font-semibold">Nom</th>
+                    <th class="px-4 py-4 text-left text-gray-500 font-semibold">Description</th>
+                    <th class="px-4 py-4 text-center text-gray-500 font-semibold">📚 Livres</th>
+                    <th class="px-4 py-4 text-center text-gray-500 font-semibold">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for categorie in categories %}
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-all duration-200">
+                    <td class="px-4 py-3 text-gray-500">#{{ categorie.id }}</td>
+                    <td class="px-4 py-3 font-semibold text-gray-800">{{ categorie.nom }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ categorie.description|default:"—" }}</td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold">
+                            {{ categorie.nb_livres }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex gap-2 justify-center">
+                            <a href="{% url 'modifier_categorie' categorie.id %}" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-sm transition shadow-sm flex items-center gap-1">
+                                ✏️ Modifier
+                            </a>
+                            <a href="{% url 'supprimer_categorie' categorie.id %}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm transition shadow-sm flex items-center gap-1">
+                                🗑️ Supprimer
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-16">
+        <div class="text-7xl mb-4">🏷️</div>
+        <p class="text-gray-500">Aucune catégorie pour le moment.</p>
+        <p class="text-gray-400 text-sm mt-1">Cliquez sur "+ Ajouter une catégorie" pour commencer !</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="mt-6 bg-blue-50 rounded-xl p-4 border-l-4 border-blue-500">
+    <div class="flex items-center gap-3">
+        <span class="text-xl">💡</span>
+        <div>
+            <p class="text-blue-800 font-medium">Astuce</p>
+            <p class="text-blue-700 text-sm">Vous ne pouvez pas supprimer une catégorie qui contient des livres.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

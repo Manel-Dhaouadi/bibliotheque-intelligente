@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bibliothèque IA{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        /* Glassmorphism effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.95), rgba(139, 92, 246, 0.95));
+            backdrop-filter: blur(10px);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    {% include 'components/navbar.html' %}
+    
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="mb-4 p-4 rounded-xl {% if message.tags == 'error' %}bg-red-50 text-red-700 border-l-4 border-red-500{% else %}bg-green-50 text-green-700 border-l-4 border-green-500{% endif %} shadow-sm">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    {% include 'components/footer.html' %}
+    
+    {% if user.is_authenticated %}
+        {% include 'components/chatbot.html' %}
+    {% endif %}
+    
+    <script src="{% static 'js/chatbot.js' %}"></script>
+    <script>
+        document.querySelectorAll('.card-hover').forEach(el => {
+            el.classList.add('transition-all', 'duration-300');
+        });
+    </script>
+</body>
+</html>
