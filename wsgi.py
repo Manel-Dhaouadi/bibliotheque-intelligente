@@ -3,22 +3,27 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bibliotheque.settings')
 
-# ⚠️ AJOUTE CE CODE POUR LES MIGRATIONS AUTO (une seule fois)
+application = get_wsgi_application()
+
+# === MIGRATIONS AUTO - PLACÉ APRÈS application ===
 try:
     from django.core.management import call_command
-    from django.db import connection
+    from django.db import connections
+    from django.apps import apps
+    import sys
     
-    # Vérifie si les tables existent déjà
-    with connection.cursor() as cursor:
+    # Attendre que les apps soient prêtes
+    apps.ready  # Force l'initialisation des apps
+    
+    # Vérifier si les tables existent
+    with connections['default'].cursor() as cursor:
         cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'")
         result = cursor.fetchone()
         
-        # Si moins de 5 tables, on exécute les migrations
-        if result[0] < 5:
-            call_command('migrate', interactive=False)
-            call_command('collectstatic', interactive=False)
+        # Si moins de 3 tables, exécuter les migrations
+        if result[0] < 3:
+            call_command('migrate', interactive=False, verbosity=0)
+            call_command('collectstatic', interactive=False, verbosity=0)
             print("✅ Migrations exécutées avec succès!")
 except Exception as e:
-    print(f"⚠️ Erreur migrations: {e}")
-
-application = get_wsgi_application()
+    print(f"⚠️ Note: {e}")
