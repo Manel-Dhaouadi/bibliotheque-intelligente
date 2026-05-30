@@ -8,9 +8,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-key-for-dev')
 
-DEBUG = True
+# ⚠️ IMPORTANT: DEBUG = False en production
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# ⚠️ IMPORTANT: Ajouter ton URL PythonAnywhere
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1',
+    'tonusername.pythonanywhere.com',  # ← Remplace par ton username
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,13 +31,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AJOUTER pour fichiers statiques
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'bibliotheque.middleware.ForceReauthMiddleware',  # ← Cette ligne reste
+    # 'bibliotheque.middleware.ForceReauthMiddleware',  # ← Désactiver si fichier manquant
 ]
 
 ROOT_URLCONF = 'bibliotheque.urls'
@@ -54,14 +61,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bibliotheque.wsgi.application'
 
+# ⚠️ IMPORTANT: Changer pour MySQL sur PythonAnywhere (pas PostgreSQL)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'bibliotheque_db'),
-        'USER': os.getenv('DB_USER', 'bibliotheque_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres123'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tonusername$bibliotheque_db',  # ← $ est obligatoire
+        'USER': 'tonusername',  # ← Ton username PythonAnywhere
+        'PASSWORD': os.getenv('DB_PASSWORD', 'ton_mot_de_passe'),
+        'HOST': 'tonusername.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
 
@@ -79,9 +87,11 @@ TIME_ZONE = 'Europe/Paris'
 USE_I18N = True
 USE_TZ = True
 
+# ⚠️ IMPORTANT: Configuration des fichiers statiques
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -92,16 +102,10 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'accueil'
 LOGOUT_REDIRECT_URL = 'login'
 
-# Session expire à la fermeture du navigateur
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-# Durée de vie (15 minute)
-SESSION_COOKIE_AGE = 3060  # 60 secondes
-
-# Renouveler la session à chaque requête
+# ✅ Session corrigée
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # ← False pour rester connecté
+SESSION_COOKIE_AGE = 604800  # ← 7 jours (pas 3060)
 SESSION_SAVE_EVERY_REQUEST = True
-
-# Supprimer la session quand le navigateur se ferme
-SESSION_COOKIE_SECURE = False  # Mettre True si HTTPS
+SESSION_COOKIE_SECURE = False  # ← False sur PythonAnywhere (pas de HTTPS gratuit)
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'Lax'
