@@ -102,3 +102,13 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_SECURE = False  # Sur Render (HTTP)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Migration automatique au démarrage (pour Render uniquement)
+import sys
+if 'runserver' not in sys.argv and 'migrate' not in sys.argv:
+    try:
+        from django.core.management import call_command
+        call_command('migrate', interactive=False)
+        call_command('collectstatic', interactive=False)
+    except Exception as e:
+        print(f"Auto-migration error: {e}")
