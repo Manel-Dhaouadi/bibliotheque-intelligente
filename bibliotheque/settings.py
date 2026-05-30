@@ -31,6 +31,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'bibliotheque.middleware.ForceReauthMiddleware',  # ← Cette ligne reste
 ]
 
 ROOT_URLCONF = 'bibliotheque.urls'
@@ -90,3 +91,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'accueil'
 LOGOUT_REDIRECT_URL = 'login'
+
+# Session expire à la fermeture du navigateur
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Durée de vie (15 minute)
+SESSION_COOKIE_AGE = 3060  # 60 secondes
+
+# Renouveler la session à chaque requête
+SESSION_SAVE_EVERY_REQUEST = True
+
+# Supprimer la session quand le navigateur se ferme
+SESSION_COOKIE_SECURE = False  # Mettre True si HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Strict'

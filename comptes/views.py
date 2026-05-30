@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from .models import Utilisateur
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 def register_view(request):
     if request.user.is_authenticated:
@@ -83,3 +86,11 @@ def logout_view(request):
     logout(request)
     messages.info(request, "Vous avez été déconnecté")
     return redirect('login')
+
+@login_required
+def check_auth(request):
+    """Vérifie si l'utilisateur est authentifié (pour AJAX)"""
+    return JsonResponse({
+        'authenticated': request.user.is_authenticated,
+        'username': request.user.username
+    })

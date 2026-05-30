@@ -120,7 +120,7 @@ class Emprunt(models.Model):
     """Modèle pour gérer les emprunts de livres"""
     
     # Durée d'emprunt en jours (modifiable facilement)
-    DUREE_EMPRUNT_JOURS = 5  # 5 jours au lieu de 14
+    DUREE_EMPRUNT_JOURS = 5
     
     livre = models.ForeignKey(Livre, on_delete=models.CASCADE, related_name='emprunts')
     utilisateur = models.ForeignKey(
@@ -161,3 +161,22 @@ class Emprunt(models.Model):
         if self.est_en_retard:
             return (date.today() - self.date_retour_prevue).days
         return 0
+
+class ConversationChatbot(models.Model):
+    """Modèle pour stocker l'historique des conversations du chatbot"""
+    utilisateur = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='conversations_chatbot'
+    )
+    question = models.TextField()
+    reponse = models.TextField()
+    date_creation = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Conversation Chatbot"
+        verbose_name_plural = "Conversations Chatbot"
+        ordering = ['-date_creation']
+    
+    def __str__(self):
+        return f"{self.utilisateur.username} - {self.date_creation.strftime('%d/%m/%Y %H:%M')}"

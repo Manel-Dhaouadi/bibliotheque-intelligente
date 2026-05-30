@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count
-from .models import Livre, Categorie, Emprunt
+from .models import Livre, Categorie, Emprunt, ConversationChatbot
 from .services.chatbot_service import ChatbotService
 from comptes.decorators import admin_required
 from datetime import date
 from django.views.decorators.csrf import csrf_exempt
 import json
+import random
 from django.http import JsonResponse
 
 @login_required
@@ -39,20 +40,23 @@ def liste_livres(request):
 @admin_required
 def ajouter_livre(request):
     """Ajouter un livre - admin uniquement"""
+    from .forms import LivreForm
+    
     if request.method == 'POST':
-        livre = Livre.objects.create(
-            titre=request.POST.get('titre'),
-            auteur=request.POST.get('auteur'),
-            categorie_id=request.POST.get('categorie') or None,
-            annee_publication=request.POST.get('annee_publication') or None,
-            quantite_totale=int(request.POST.get('quantite_totale', 1)),
-            quantite_disponible=int(request.POST.get('quantite_disponible', 1)),
-        )
-        messages.success(request, f'Livre "{livre.titre}" ajouté avec succès')
-        return redirect('liste_livres')
+        form = LivreForm(request.POST)
+        if form.is_valid():
+            livre = form.save()
+            messages.success(request, f'Livre "{livre.titre}" ajouté avec succès')
+            return redirect('liste_livres')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Erreur: {error}")
+    else:
+        form = LivreForm()
     
     categories = Categorie.objects.all()
-    return render(request, 'livres/ajouter.html', {'categories': categories})
+    return render(request, 'livres/ajouter.html', {'form': form, 'categories': categories})
 
 @login_required
 @admin_required
@@ -208,10 +212,37 @@ def retourner_livre(request, pk):
 @admin_required
 def statistiques(request):
     """Statistiques - admin uniquement"""
+    from datetime import date
+    
     total_livres = Livre.objects.count()
     livres_disponibles = Livre.objects.filter(quantite_disponible__gt=0).count()
-    emprunts_actifs = Emprunt.objects.filter(date_retour_reelle__isnull=True).count()
+    
+    # Calcul des emprunts en retard
+    today = date.today()
+    emprunts_en_retard = Emprunt.objects.filter(
+        date_retour_reelle__isnull=True,
+        date_retour_prevue__lt=today
+    ).count()
+    
     taux = (livres_disponibles / total_livres * 100) if total_livres > 0 else 0
+    
+    # Citations aléatoires
+    citations = [
+        {"texte": "Un livre est un ami qui ne change jamais.", "auteur": "Victor Hugo"},
+        {"texte": "Lire, c'est voyager sans bouger.", "auteur": "Marcel Proust"},
+        {"texte": "Un livre ouvert est un cerveau qui parle.", "auteur": "Paul Valéry"},
+        {"texte": "La lecture est une promenade à travers les mots.", "auteur": "Albert Camus"},
+        {"texte": "Un livre est un jardin qu'on porte dans sa poche.", "auteur": "Proverbe chinois"},
+        {"texte": "Lire, c'est rêver les yeux ouverts.", "auteur": "Anonyme"},
+        {"texte": "Les livres sont les miroirs de l'âme.", "auteur": "Victor Hugo"},
+        {"texte": "La lecture adoucit les mœurs.", "auteur": "Voltaire"},
+        {"texte": "Un livre, c'est un rêve que l'on tient entre ses mains.", "auteur": "Neil Gaiman"},
+        {"texte": "Lire, c'est vivre plusieurs vies.", "auteur": "George R.R. Martin"},
+        {"texte": "Un livre vaut mille amis.", "auteur": "Proverbe arabe"},
+        {"texte": "La lecture est à l'esprit ce que l'exercice est au corps.", "auteur": "Joseph Addison"},
+    ]
+    
+    citation_du_jour = random.choice(citations)
     
     # Calcul des pourcentages pour les catégories
     livres_par_categorie = []
@@ -223,36 +254,58 @@ def statistiques(request):
             'pourcentage': pourcentage
         })
     
-    # Calcul des pourcentages pour les auteurs
-    top_auteurs = []
-    for auteur in Livre.objects.values('auteur').annotate(total=Count('id_livre')).order_by('-total')[:5]:
-        pourcentage = int((auteur['total'] / total_livres * 100)) if total_livres > 0 else 0
-        top_auteurs.append({
-            'auteur': auteur['auteur'],
-            'total': auteur['total'],
-            'pourcentage': pourcentage
-        })
+    # Calcul des TOP AUTEURS selon les emprunts
+    top_auteurs_emprunts = []
+    auteurs = Livre.objects.values_list('auteur', flat=True).distinct()
+    total_emprunts_all = Emprunt.objects.count()
+    
+    for auteur in auteurs:
+        total_emprunts = Emprunt.objects.filter(livre__auteur=auteur).count()
+        if total_emprunts > 0:
+            pourcentage = int((total_emprunts / total_emprunts_all * 100)) if total_emprunts_all > 0 else 0
+            top_auteurs_emprunts.append({
+                'auteur': auteur,
+                'total_emprunts': total_emprunts,
+                'pourcentage': pourcentage
+            })
+    
+    top_auteurs_emprunts.sort(key=lambda x: x['total_emprunts'], reverse=True)
+    top_auteurs_emprunts = top_auteurs_emprunts[:5]
     
     context = {
         'total_livres': total_livres,
         'livres_disponibles': livres_disponibles,
         'taux_disponibilite': round(taux),
-        'emprunts_actifs': emprunts_actifs,
+        'emprunts_en_retard': emprunts_en_retard,
+        'citation_texte': citation_du_jour['texte'],
+        'citation_auteur': citation_du_jour['auteur'],
         'livres_par_categorie': livres_par_categorie,
-        'top_auteurs': top_auteurs,
+        'top_auteurs_emprunts': top_auteurs_emprunts,
     }
     return render(request, 'statistiques/index.html', context)
 
 @csrf_exempt
 def chatbot_question(request):
-    """Chatbot - accessible à tous"""
+    """Chatbot avec mémoire de conversation - Version optimisée"""
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             question = data.get('question', '')
-            service = ChatbotService()
-            reponse = service.traiter_question(question)
+            historique = data.get('historique', [])
+            message_count = data.get('messageCount', 0)
+            
+            service = ChatbotService(
+                utilisateur=request.user if request.user.is_authenticated else None
+            )
+            
+            reponse = service.traiter_question(question, historique, message_count)
             return JsonResponse({'reponse': reponse})
         except Exception as e:
             return JsonResponse({'reponse': f"❌ Erreur: {str(e)}"}, status=500)
     return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+@login_required
+def get_chatbot_historique(request):
+    """Récupérer l'historique des conversations de l'utilisateur"""
+    service = ChatbotService(utilisateur=request.user)
+    historique = service.get_historique_utilisateur()
+    return JsonResponse({'historique': historique})

@@ -2,122 +2,177 @@
 {% block title %}Statistiques - Bibliothèque IA{% endblock %}
 
 {% block content %}
-<div class="bg-white rounded-3xl shadow-xl p-8">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">📊 Tableau de bord</h1>
-        <p class="text-gray-500 mt-1">Analyse complète de votre bibliothèque</p>
+<div class="bg-white rounded-3xl shadow-xl p-4 md:p-8">
+    <div class="mb-6 md:mb-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">📊 Tableau de bord</h1>
+        <p class="text-gray-500 text-sm md:text-base mt-1">Analyse complète de votre bibliothèque</p>
     </div>
 
     <!-- Cartes statistiques -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl p-5 text-white shadow-lg">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
+        <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl md:rounded-2xl p-3 md:p-5 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2 md:mb-3">
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-white/20 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-2xl backdrop-blur-sm">
                     📚
                 </div>
-                <span class="text-3xl font-bold">{{ total_livres }}</span>
+                <span class="text-xl md:text-3xl font-bold">{{ total_livres }}</span>
             </div>
-            <p class="text-sm opacity-90">Livres total</p>
+            <p class="text-xs md:text-sm opacity-90">Livres total</p>
         </div>
-        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl md:rounded-2xl p-3 md:p-5 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2 md:mb-3">
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-white/20 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-2xl backdrop-blur-sm">
                     ✅
                 </div>
-                <span class="text-3xl font-bold">{{ livres_disponibles }}</span>
+                <span class="text-xl md:text-3xl font-bold">{{ livres_disponibles }}</span>
             </div>
-            <p class="text-sm opacity-90">Livres disponibles</p>
+            <p class="text-xs md:text-sm opacity-90">Livres disponibles</p>
         </div>
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl md:rounded-2xl p-3 md:p-5 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2 md:mb-3">
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-white/20 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-2xl backdrop-blur-sm">
                     📊
                 </div>
-                <span class="text-3xl font-bold">{{ taux_disponibilite }}%</span>
+                <span class="text-xl md:text-3xl font-bold">{{ taux_disponibilite }}%</span>
             </div>
-            <p class="text-sm opacity-90">Taux de disponibilité</p>
+            <p class="text-xs md:text-sm opacity-90">Taux de disponibilité</p>
         </div>
-        <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl backdrop-blur-sm">
-                    🔄
+        <div class="bg-gradient-to-br from-rose-500 to-red-600 rounded-xl md:rounded-2xl p-3 md:p-5 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2 md:mb-3">
+                <div class="w-8 h-8 md:w-12 md:h-12 bg-white/20 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-2xl backdrop-blur-sm">
+                    ⏰
                 </div>
-                <span class="text-3xl font-bold">{{ emprunts_actifs }}</span>
+                <span class="text-xl md:text-3xl font-bold">{{ emprunts_en_retard }}</span>
             </div>
-            <p class="text-sm opacity-90">Emprunts actifs</p>
+            <p class="text-xs md:text-sm opacity-90">Emprunts en retard</p>
         </div>
     </div>
 
     <!-- Graphiques -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         <!-- Livres par catégorie -->
-        <div class="bg-gray-50 rounded-2xl p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2">
-                <span class="text-2xl">📊</span> Livres par catégorie
+        <div class="bg-gray-50 rounded-xl md:rounded-2xl p-4 md:p-6">
+            <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-4 md:mb-5 flex items-center gap-2">
+                <span class="text-xl md:text-2xl">📊</span> Livres par catégorie
             </h2>
             {% if livres_par_categorie %}
-                <div class="space-y-4">
+                <div class="space-y-3 md:space-y-4">
                     {% for cat in livres_par_categorie %}
                     <div>
-                        <div class="flex justify-between text-sm mb-1.5">
+                        <div class="flex justify-between text-xs md:text-sm mb-1.5">
                             <span class="font-medium text-gray-700">{{ cat.nom }}</span>
-                            <span class="text-indigo-600 font-semibold">{{ cat.count }} livre(s)</span>
+                            <span class="text-indigo-600 font-semibold text-xs md:text-sm">{{ cat.count }} livre(s)</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full transition-all duration-500" style="width: {{ cat.pourcentage }}%;"></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 md:h-2.5">
+                            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 md:h-2.5 rounded-full transition-all duration-500" style="width: {{ cat.pourcentage }}%;"></div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="text-gray-500 text-center py-8">Aucune catégorie</p>
+                <p class="text-gray-500 text-center py-6 md:py-8 text-sm">Aucune catégorie</p>
             {% endif %}
         </div>
 
-        <!-- Top auteurs -->
-        <div class="bg-gray-50 rounded-2xl p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2">
-                <span class="text-2xl">🏆</span> Top 5 auteurs
+        <!-- Top 5 auteurs selon les emprunts -->
+        <div class="bg-gray-50 rounded-xl md:rounded-2xl p-4 md:p-6">
+            <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-4 md:mb-5 flex items-center gap-2">
+                <span class="text-xl md:text-2xl">🏆</span> Top 5 auteurs les plus empruntés
             </h2>
-            {% if top_auteurs %}
-                <div class="space-y-4">
-                    {% for auteur in top_auteurs %}
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
+            {% if top_auteurs_emprunts %}
+                <div class="space-y-3 md:space-y-4">
+                    {% for auteur in top_auteurs_emprunts %}
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <div class="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-md">
                             {{ forloop.counter }}
                         </div>
                         <div class="flex-1">
-                            <div class="font-semibold text-gray-800">{{ auteur.auteur }}</div>
-                            <div class="text-sm text-gray-500">{{ auteur.total }} livre(s)</div>
+                            <div class="font-semibold text-gray-800 text-sm md:text-base">{{ auteur.auteur }}</div>
+                            <div class="text-xs text-gray-500">{{ auteur.total_emprunts }} emprunt(s)</div>
                         </div>
-                        <div class="w-28 bg-gray-200 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-500" style="width: {{ auteur.pourcentage }}%;"></div>
+                        <div class="w-20 md:w-28 bg-gray-200 rounded-full h-1.5 md:h-2">
+                            <div class="bg-gradient-to-r from-emerald-500 to-green-500 h-1.5 md:h-2 rounded-full transition-all duration-500" style="width: {{ auteur.pourcentage }}%;"></div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
+                <div class="mt-4 p-3 bg-indigo-50 rounded-lg">
+                    <p class="text-xs text-indigo-600 flex items-center gap-1">
+                        <span>💡</span> Classement basé sur le nombre total d'emprunts par auteur
+                    </p>
+                </div>
             {% else %}
-                <p class="text-gray-500 text-center py-8">Aucun auteur</p>
+                <p class="text-gray-500 text-center py-6 md:py-8 text-sm">Aucun emprunt pour le moment</p>
             {% endif %}
         </div>
     </div>
 
-    <!-- Conseils -->
-    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border-l-4 border-blue-500">
-            <div class="text-2xl mb-2">💡</div>
-            <h3 class="font-semibold text-blue-800">Conseil</h3>
-            <p class="text-sm text-blue-600 mt-1">Ajoutez plus de livres pour enrichir votre bibliothèque</p>
+    <!-- Cartes d'information : Conseil | Progression | Citation -->
+    <div class="mt-6 md:mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+        
+        <!-- Carte 1 : Conseil -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 md:p-5 border-l-4 border-blue-500">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="text-xl md:text-2xl">💡</div>
+                <h3 class="font-semibold text-blue-800 text-sm md:text-base">Conseil</h3>
+            </div>
+            
+            {% if emprunts_en_retard > 0 %}
+                <p class="text-xs md:text-sm text-blue-600 mt-1">
+                    ⚠️ Vous avez <strong>{{ emprunts_en_retard }}</strong> emprunt(s) en retard. Pensez à relancer les utilisateurs concernés.
+                </p>
+            {% elif taux_disponibilite < 50 %}
+                <p class="text-xs md:text-sm text-blue-600 mt-1">
+                    📉 Le taux de disponibilité est bas (<50%). Réduisez la durée d'emprunt ou augmentez le nombre d'exemplaires.
+                </p>
+            {% elif total_livres < 20 %}
+                <p class="text-xs md:text-sm text-blue-600 mt-1">
+                    📚 Votre bibliothèque est petite. Ajoutez plus de livres pour attirer plus de lecteurs !
+                </p>
+            {% else %}
+                <p class="text-xs md:text-sm text-blue-600 mt-1">
+                    ✅ Tout va bien ! Continuez à enrichir votre bibliothèque et à encourager la lecture.
+                </p>
+            {% endif %}
         </div>
-        <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-5 border-l-4 border-emerald-500">
-            <div class="text-2xl mb-2">📈</div>
-            <h3 class="font-semibold text-emerald-800">Objectif</h3>
-            <p class="text-sm text-emerald-600 mt-1">Atteindre un taux de disponibilité de 80%</p>
+
+        <!-- Carte 2 : Progression -->
+        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 md:p-5 border-l-4 border-purple-500">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="text-xl md:text-2xl">🎯</div>
+                <h3 class="font-semibold text-purple-800 text-sm md:text-base">Progression</h3>
+            </div>
+            <p class="text-xs md:text-sm text-purple-600 mt-1">{{ livres_disponibles }}/{{ total_livres }} livres disponibles</p>
+            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: {{ taux_disponibilite }}%;"></div>
+            </div>
+            <div class="flex justify-between text-xs text-purple-500 mt-1">
+                <span>0%</span>
+                <span>{{ taux_disponibilite }}%</span>
+                <span>100%</span>
+            </div>
+            <p class="text-xs text-purple-600 mt-2">
+                {% if taux_disponibilite >= 80 %}
+                    🎉 Excellent ! Objectif atteint !
+                {% elif taux_disponibilite >= 60 %}
+                    👍 Bien ! Encore un effort pour atteindre 80%
+                {% elif taux_disponibilite >= 40 %}
+                    📈 Continuez comme ça, vous allez y arriver
+                {% else %}
+                    💪 Il faut améliorer la disponibilité des livres
+                {% endif %}
+            </p>
         </div>
-        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-5 border-l-4 border-purple-500">
-            <div class="text-2xl mb-2">🎯</div>
-            <h3 class="font-semibold text-purple-800">Progression</h3>
-            <p class="text-sm text-purple-600 mt-1">{{ livres_disponibles }}/{{ total_livres }} livres disponibles</p>
+
+        <!-- Carte 3 : Citation -->
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 md:p-5 border-l-4 border-amber-500">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="text-xl md:text-2xl">📖</div>
+                <h3 class="font-semibold text-amber-800 text-sm md:text-base">Citation du jour</h3>
+            </div>
+            <div class="mt-1">
+                <p class="text-sm md:text-base italic text-amber-900">"{{ citation_texte }}"</p>
+            </div>
         </div>
     </div>
 </div>

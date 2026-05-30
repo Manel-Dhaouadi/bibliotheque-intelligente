@@ -16,4 +16,5 @@ urlpatterns = [
     path('emprunts/<int:pk>/retourner/', views.retourner_livre, name='retourner_livre'),
     path('statistiques/', views.statistiques, name='statistiques'),
     path('api/chatbot/question/', views.chatbot_question, name='chatbot_question'),
+    path('api/chatbot/historique/', views.get_chatbot_historique, name='chatbot_historique'),
 ]
