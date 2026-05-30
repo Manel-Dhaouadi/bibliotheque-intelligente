@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: bash startup.sh
+    startCommand: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn bibliotheque.wsgi:application"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: bibliotheque.settings
