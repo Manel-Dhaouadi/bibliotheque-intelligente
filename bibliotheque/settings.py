@@ -102,3 +102,41 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# ============================================
+# MIGRATION AUTOMATIQUE AU DÉMARRAGE (CORRIGÉE)
+# ============================================
+import sys
+import logging
+
+# Désactiver les logs pendant la migration pour éviter les erreurs
+logging.disable(logging.CRITICAL)
+
+if 'migrate' not in sys.argv and 'collectstatic' not in sys.argv and 'createsuperuser' not in sys.argv:
+    try:
+        from django.core.management import call_command
+        from django.db import connections
+        from django.db.utils import OperationalError
+        
+        # Vérifier la connexion à la base
+        try:
+            with connections['default'].cursor() as cursor:
+                # Vérifie si la table 'comptes_utilisateur' existe (méthode PostgreSQL compatible)
+                cursor.execute("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'comptes_utilisateur')")
+                exists = cursor.fetchone()[0]
+                
+                if not exists:
+                    print("🔧 Création des tables de la base de données...")
+                    call_command('migrate', interactive=False, verbosity=0)
+                    call_command('collectstatic', interactive=False, verbosity=0)
+                    print("✅ Migrations exécutées avec succès!")
+                else:
+                    print("✅ Base de données déjà prête.")
+        except OperationalError:
+            print("⚠️ Base de données non encore disponible, migrations ignorées pour l'instant.")
+            
+    except Exception as e:
+        print(f"⚠️ Note: {e}")
+
+# Réactiver les logs
+logging.disable(logging.NOTSET)
