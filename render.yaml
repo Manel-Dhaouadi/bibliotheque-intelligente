@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn bibliotheque.wsgi:application
+    startCommand: bash startup.sh
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: bibliotheque.settings
@@ -17,7 +17,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: GEMINI_API_KEY
-        value: AIzaSyDFd0SMgerKN3GxPnjarnVNXeV6rCxJzBc  # ← TA VRAIE CLÉ ICI
+        value: AIzaSyDFd0SMgerKN3GxPnjarnVNXeV6rCxJzBc
       - key: DEBUG
         value: "False"
 

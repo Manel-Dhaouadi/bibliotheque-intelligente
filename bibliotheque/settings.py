@@ -16,7 +16,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1',
-    '.onrender.com',  # Permet tous les sous-domaines render.com
+    '.onrender.com',
 ]
 
 INSTALLED_APPS = [
@@ -26,14 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'whitenoise.runserver_nostatic',  # ← NOUVEAU: pour fichiers statiques
+    'whitenoise.runserver_nostatic',
     'comptes',
     'livres',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← NOUVEAU
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,7 +62,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bibliotheque.wsgi.application'
 
-# ⚠️ Base de données PostgreSQL avec DATABASE_URL (Render fournira cette URL)
+# Base de données PostgreSQL avec DATABASE_URL
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
@@ -81,7 +81,7 @@ TIME_ZONE = 'Europe/Paris'
 USE_I18N = True
 USE_TZ = True
 
-# ⚠️ Configuration fichiers statiques pour Render
+# Configuration fichiers statiques
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -97,18 +97,8 @@ LOGIN_REDIRECT_URL = 'accueil'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Session
-SESSION_COOKIE_AGE = 604800  # 7 jours
+SESSION_COOKIE_AGE = 604800
 SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_SECURE = False  # Sur Render (HTTP)
+SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
-
-# Migration automatique au démarrage (pour Render uniquement)
-import sys
-if 'runserver' not in sys.argv and 'migrate' not in sys.argv:
-    try:
-        from django.core.management import call_command
-        call_command('migrate', interactive=False)
-        call_command('collectstatic', interactive=False)
-    except Exception as e:
-        print(f"Auto-migration error: {e}")
