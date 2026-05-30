@@ -26,6 +26,7 @@ Application web complète de gestion de bibliothèque avec :
 - **FontAwesome** - Icônes
 
 ## 📁 Structure du projet
+
 bibliotheque_intelligente/
 ├── bibliotheque/ # Configuration du projet Django
 │ ├── settings.py
