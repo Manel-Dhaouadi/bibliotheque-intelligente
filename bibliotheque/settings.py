@@ -1,4 +1,5 @@
 import os
+import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -8,14 +9,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-key-for-dev')
 
-# ⚠️ IMPORTANT: DEBUG = False en production
+# ⚠️ IMPORTANT: DEBUG = False pour la production
 DEBUG = False
 
-# ⚠️ IMPORTANT: Ajouter ton URL PythonAnywhere
+# ⚠️ IMPORTANT: Autoriser Render.com
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1',
-    'tonusername.pythonanywhere.com',  # ← Remplace par ton username
+    '.onrender.com',  # Permet tous les sous-domaines render.com
 ]
 
 INSTALLED_APPS = [
@@ -25,20 +26,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',  # ← NOUVEAU: pour fichiers statiques
     'comptes',
     'livres',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← AJOUTER pour fichiers statiques
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← NOUVEAU
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'bibliotheque.middleware.ForceReauthMiddleware',  # ← Désactiver si fichier manquant
 ]
 
 ROOT_URLCONF = 'bibliotheque.urls'
@@ -61,16 +62,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bibliotheque.wsgi.application'
 
-# ⚠️ IMPORTANT: Changer pour MySQL sur PythonAnywhere (pas PostgreSQL)
+# ⚠️ Base de données PostgreSQL avec DATABASE_URL (Render fournira cette URL)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tonusername$bibliotheque_db',  # ← $ est obligatoire
-        'USER': 'tonusername',  # ← Ton username PythonAnywhere
-        'PASSWORD': os.getenv('DB_PASSWORD', 'ton_mot_de_passe'),
-        'HOST': 'tonusername.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
 AUTH_USER_MODEL = 'comptes.Utilisateur'
@@ -87,7 +81,7 @@ TIME_ZONE = 'Europe/Paris'
 USE_I18N = True
 USE_TZ = True
 
-# ⚠️ IMPORTANT: Configuration des fichiers statiques
+# ⚠️ Configuration fichiers statiques pour Render
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -102,10 +96,9 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'accueil'
 LOGOUT_REDIRECT_URL = 'login'
 
-# ✅ Session corrigée
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # ← False pour rester connecté
-SESSION_COOKIE_AGE = 604800  # ← 7 jours (pas 3060)
+# Session
+SESSION_COOKIE_AGE = 604800  # 7 jours
 SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_SECURE = False  # ← False sur PythonAnywhere (pas de HTTPS gratuit)
+SESSION_COOKIE_SECURE = False  # Sur Render (HTTP)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
